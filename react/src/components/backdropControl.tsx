@@ -1,8 +1,11 @@
 "use client";
 
+import { MotorEvents } from "@/classes/socketClients/Motor";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useActiveMotor } from "@/store/motorSlice";
+import { TWebSocketMotorRunningEventPayload } from "@/types";
+import { useEffect, useState } from "react";
 
 type TParams = {
   onUpPressed: () => void;
@@ -15,10 +18,20 @@ export default function BackdropControl({
   onStopPressed,
   onUpPressed,
 }: TParams) {
-  const [isMoving, setIsMoving] = useState<"up" | "down" | null>(null);
+  const [isMoving, setIsMoving] = useState<boolean>(false);
+  const [direction, setDirection] = useState<"up" | "down" | null>(null);
+  const motor = useActiveMotor();
+
+  motor?.addEventListener(
+    MotorEvents.running,
+    (payload: TWebSocketMotorRunningEventPayload) => {
+      setIsMoving(payload.running);
+      setDirection(payload.direction);
+    }
+  );
 
   const handleMove = (direction: "up" | "down") => {
-    setIsMoving(direction);
+    setDirection(direction);
     if (direction === "down") {
       return onDownPressed();
     }
@@ -28,24 +41,34 @@ export default function BackdropControl({
   };
 
   const handleStop = () => {
-    setIsMoving(null);
+    setDirection(null);
     onStopPressed();
   };
 
+  const handleCalibration = () => {
+    if (!motor) return;
+    const result = confirm("Aktuelle Position als Nullpunkt speichern?");
+    if (result) {
+      motor.calibrate();
+    }
+  };
+
+  useEffect(() => {}, [motor]);
+
   return (
-    <div className="bg-background p-4 flex justify-center items-center">
+    <div className="p-4 flex justify-center items-center">
       <Card className="max-w-md mx-auto p-6 relative screen-100">
         <div className="mt-8 flex flex-col items-center gap-4">
           <Button
-            className="w-32 h-32 p-0"
-            variant={isMoving === "up" ? "default" : "secondary"}
+            className="w-24 h-24 p-0"
+            variant={direction === "up" && isMoving ? "default" : "secondary"}
             onClick={() => handleMove("up")}
           >
             <div className="w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-b-[60px] border-b-current" />
           </Button>
 
           <Button
-            className="w-32 h-32 p-0"
+            className="w-24 h-24 p-0"
             variant="secondary"
             onClick={handleStop}
           >
@@ -53,12 +76,18 @@ export default function BackdropControl({
           </Button>
 
           <Button
-            className="w-32 h-32 p-0"
-            variant={isMoving === "down" ? "default" : "secondary"}
+            className="w-24 h-24 p-0"
+            variant={direction === "down" && isMoving ? "default" : "secondary"}
             onClick={() => handleMove("down")}
           >
             <div className="w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-t-[60px] border-t-current" />
           </Button>
+        </div>
+        <div className="flex flex-col gap-4 mt-8">
+          <Button onClick={() => handleCalibration()}>
+            Als Nullpunkt definieren
+          </Button>
+          <Button>Position speichern</Button>
         </div>
       </Card>
     </div>

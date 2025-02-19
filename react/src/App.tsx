@@ -1,33 +1,47 @@
 import "./App.css";
 import BackdropControl from "./components/backdropControl";
-import { WebSocketEvent } from "./lib/webSocketEvent";
-import { ws } from "./lib/websocket";
+import ColorSelector from "./components/colorSelector";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { RootState } from "./store";
+import { setSelectedColor } from "./store/colorSlice";
+import { TColor } from "./types";
+import { useDispatch, useSelector } from "react-redux";
+import { useActiveMotor } from "./store/motorSlice";
 
 function App() {
-  const onUpPressed = () => {
-    ws.send(new WebSocketEvent("MOVE_UP"));
-  };
-  const onDownPressed = () => {
-    ws.send(new WebSocketEvent("MOVE_DOWN"));
-  };
-  const onStopPressed = () => {
-    ws.send(new WebSocketEvent("MOVE_STOP"));
-  };
-
-  ws.addEventListener(
-    "POSITION_INIT",
-    (payload: { motor: number; position: number }) => {
-      console.log("Motor", payload.motor, "ist auf position", payload.position);
-    }
+  const availableColors = useSelector(
+    (state: RootState) => state.colorReducer.available
   );
+  const motor = useActiveMotor();
+  const dispatch = useDispatch();
 
   return (
     <>
-      <BackdropControl
-        onDownPressed={onDownPressed}
-        onStopPressed={onStopPressed}
-        onUpPressed={onUpPressed}
+      <h1>Backdrop RC</h1>
+      <ColorSelector
+        colors={availableColors}
+        onChange={(selected: TColor) => {
+          dispatch(setSelectedColor(selected));
+        }}
       />
+
+      <Tabs defaultValue="account" className="w-screen mt-4">
+        <TabsList className="bg-white w-screen">
+          <TabsTrigger value="manuel">Manuell</TabsTrigger>
+          <TabsTrigger value="automatic">Automatisch</TabsTrigger>
+        </TabsList>
+        <TabsContent value="manuel">
+          {!motor && <p>Bitte wähle eine Farbe</p>}
+          {motor && (
+            <BackdropControl
+              onDownPressed={() => motor.moveDown()}
+              onUpPressed={() => motor.moveUp()}
+              onStopPressed={() => motor.stop()}
+            />
+          )}
+        </TabsContent>
+        <TabsContent value="automatic">Change your password here.</TabsContent>
+      </Tabs>
     </>
   );
 }
