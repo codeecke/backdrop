@@ -1,24 +1,20 @@
-#ifndef StopCommand_h
-#define StopCommand_h
+#ifndef STOP_COMMAND_H
+#define STOP_COMMAND_H
 
 #include <Arduino.h>
-#include <ESPAsyncWebServer.h>
-#include "AbstractCommand.h"
-#include "../Motor.h"
+#include "./AbstractCommand.h"
+#include "../motor/Motor.h"
 
 struct StopCommandPayload
 {
+    u_int motorId;
 };
 
 class StopCommand : public AbstractCommand
 {
-private:
-    Motor *motor;
-
 public:
-    StopCommand(Motor *motor);
-    u_int getMotorId();
-    String getName();
+    StopCommand();
+    bool fromJson(JsonVariant json, StopCommandPayload &payload);
     void execute(AsyncWebSocketClient *clientConnection, JsonVariant payload);
 };
 

@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import colorReducer from "./colorSlice";
 import motorReducer from "./motorSlice";
+import positionListReducer from "./positionListSlice";
 
 export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
@@ -10,6 +11,7 @@ export const store = configureStore({
   reducer: {
     colorReducer,
     motorReducer,
+    positionListReducer,
   },
 });
 

@@ -24,8 +24,7 @@ const motorSlice = createSlice({
       state.motors = payload;
     },
     setActiveMotorId(state, { payload }: { payload: TMotorId | undefined }) {
-      console.log("setActiveMotorId", payload);
-      if (!payload) {
+      if (typeof payload === "undefined") {
         state.activeMotor = undefined;
         return;
       }

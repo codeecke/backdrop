@@ -9,3 +9,6 @@ export * from "./TWebSocketPositionUpdateEvent";
 export * from "./TWebsocketCommands";
 export * from "./TWebSocketEventPayload";
 export * from "./TWebSocketMotorRunningEventPayload";
+export * from "./TWebSocketPositionListUpdateEvent";
+export * from "./TWebSocketPositionListUpdateEventPayload";
+export * from "./TWebSocketPositionListUpdateEventPayloadItem";

@@ -1,18 +1,14 @@
-#ifndef AbstractCommand_h
-#define AbstractCommand_h
+#ifndef ABSTRACT_COMMAND_H
+#define ABSTRACT_COMMAND_H
 
-#include <any>
-#include <Arduino.h>
 #include <ArduinoJson.h>
 #include <ESPAsyncWebServer.h>
-#include <iostream>
 
 class AbstractCommand
 {
 public:
-    virtual u_int getMotorId();
-    virtual String getName();
-    virtual void execute(AsyncWebSocketClient *clientConnection, JsonVariant payload = JsonVariant());
+    virtual ~AbstractCommand() = default;
+    virtual void execute(AsyncWebSocketClient *clientConnection, JsonVariant payload) = 0;
 };
 
 #endif

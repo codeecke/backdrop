@@ -1,28 +1,40 @@
-#include "MoveCommand.h"
+#include "./MoveCommand.h"
 
-MoveCommand::MoveCommand(Motor *motor) : motor(motor) {};
+MoveCommand::MoveCommand()
+{
+    Serial.println("Up command found");
+}
 
-u_int MoveCommand::getMotorId()
+bool MoveCommand::fromJson(JsonVariant json, MoveCommandPayload &payload)
 {
-    return this->motor->getId();
-};
-String MoveCommand::getName()
-{
-    return "move";
-};
+    if (!json["motorId"].is<u_int>() || !json["direction"].is<String>())
+    {
+        Serial.println("Fehlende Werte in der Payload vom MoveCommand");
+        return false;
+    }
+    payload.direction = json["direction"].as<String>();
+    payload.motorId = json["motorId"].as<u_int>();
+    return true;
+}
+
 void MoveCommand::execute(AsyncWebSocketClient *clientConnection, JsonVariant payload)
 {
-    String direction = payload;
-    Serial.printf("MoveCommand::execute() / payload: %s\r\n", direction);
-    Serial.printf("Address of motor in MoveCommand: %p\n", &(this->motor));
-    if (direction == "up")
+    MoveCommandPayload payloadData;
+    if (!fromJson(payload, payloadData))
+        return;
+
+    u_int motorId = payloadData.motorId;
+    if (!check_motor_id(motorId))
     {
-        Serial.println("Move up");
-        this->motor->up();
+        Serial.println("Invalid MotorID in MoveCommand");
+        return;
     }
-    else if (direction == "down")
-    {
-        Serial.println("Move down");
-        this->motor->down();
-    }
+    Serial.println("Move command executed");
+    Serial.printf("Move Motor %d %swards\n", payloadData.motorId, payloadData.direction);
+
+    int target = payloadData.direction == "up" ? 1e6 : -1e6;
+
+    stepper[motorId]->setAcceleration(1e6);
+    stepper[motorId]->setSpeedInHz(1e4);
+    stepper[motorId]->move(target);
 }

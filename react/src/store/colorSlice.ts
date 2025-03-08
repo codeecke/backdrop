@@ -7,10 +7,10 @@ interface ColorState {
 }
 
 const initialState: ColorState = {
-  selected: undefined,
+  selected: { id: 0, name: "black", code: "#000000" },
   available: [
-    { id: 1, name: "black", code: "#000000" },
-    { id: 2, name: "white", code: "#ffffff" },
+    { id: 0, name: "black", code: "#000000" },
+    { id: 1, name: "white", code: "#ffffff" },
   ],
 };
 

@@ -4,9 +4,14 @@ import ColorSelector from "./components/colorSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { RootState } from "./store";
 import { setSelectedColor } from "./store/colorSlice";
-import { TColor } from "./types";
+import { TColor, TWebSocketPositionListUpdateEventPayload } from "./types";
 import { useDispatch, useSelector } from "react-redux";
 import { useActiveMotor } from "./store/motorSlice";
+import { useWebSocketEvent } from "./components/WebSocketProvider";
+import { WebSocketEventName } from "./validators";
+import { useEffect } from "react";
+import { setPositionList } from "./store/positionListSlice";
+import { PositionList } from "./components/PositionList";
 
 function App() {
   const availableColors = useSelector(
@@ -14,6 +19,18 @@ function App() {
   );
   const motor = useActiveMotor();
   const dispatch = useDispatch();
+  const event = useWebSocketEvent();
+
+  useEffect(() => {
+    if (!event) return;
+    console.log("eventlistener initialized");
+    event.addEventListener(WebSocketEventName.PositionListUpdate, (payload) => {
+      console.log("positions loeded", payload);
+      dispatch(
+        setPositionList(payload as TWebSocketPositionListUpdateEventPayload)
+      );
+    });
+  }, [event]);
 
   return (
     <>
@@ -25,7 +42,7 @@ function App() {
         }}
       />
 
-      <Tabs defaultValue="account" className="w-screen mt-4">
+      <Tabs defaultValue="automatic" className="w-screen mt-4">
         <TabsList className="bg-white w-screen">
           <TabsTrigger value="manuel">Manuell</TabsTrigger>
           <TabsTrigger value="automatic">Automatisch</TabsTrigger>
@@ -40,7 +57,9 @@ function App() {
             />
           )}
         </TabsContent>
-        <TabsContent value="automatic">Change your password here.</TabsContent>
+        <TabsContent value="automatic">
+          {motor && <PositionList motor={motor} />}
+        </TabsContent>
       </Tabs>
     </>
   );

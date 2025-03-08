@@ -1,20 +1,35 @@
-#include "../Motor.h"
-#include "AbstractCommand.h"
-#include "StopCommand.h"
+#include "./StopCommand.h"
 
-StopCommand::StopCommand(Motor *motor) : motor(motor) {}
-
-u_int StopCommand::getMotorId()
+StopCommand::StopCommand()
 {
-    return this->motor->getId();
-};
+    Serial.println("Stop command found");
+}
 
-String StopCommand::getName()
+bool StopCommand::fromJson(JsonVariant json, StopCommandPayload &payload)
 {
-    return "stop";
-};
+    if (!json["motorId"].is<u_int>())
+    {
+        Serial.println("MotorID is missing in StopCommand");
+        return false;
+    }
+    payload.motorId = json["motorId"].as<u_int>();
+    return true;
+}
 
 void StopCommand::execute(AsyncWebSocketClient *clientConnection, JsonVariant payload)
 {
-    this->motor->stop();
-};
+    StopCommandPayload payloadData;
+    if (!fromJson(payload, payloadData))
+        return;
+
+    u_int motorId = payloadData.motorId;
+    if (!check_motor_id(motorId))
+    {
+        Serial.println("Invalid MotorID in StopCommand");
+        return;
+    }
+
+    Serial.println("Stop command executed");
+    stepper[motorId]->forceStop();
+    Serial.printf("Current Position: %d\n", stepper[motorId]->getCurrentPosition());
+}

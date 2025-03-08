@@ -108,12 +108,17 @@ export class Motor extends AbstractSocketClient {
   }
 
   moveTo(position: number) {
-    const command = this.createWebsocketCommand().positionUpdate(position);
+    const command = this.createWebsocketCommand().moveTo(position);
     this.send(command);
   }
 
   calibrate() {
     const command = this.createWebsocketCommand().calibrate();
+    this.send(command);
+  }
+
+  savePosition(name: string) {
+    const command = this.createWebsocketCommand().savePosition(name);
     this.send(command);
   }
 }

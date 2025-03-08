@@ -53,6 +53,13 @@ export default function BackdropControl({
     }
   };
 
+  const handleSavePosition = () => {
+    if (!motor) return;
+    const name = prompt("Name der Position");
+    if (!name) return;
+    motor.savePosition(name);
+  };
+
   useEffect(() => {}, [motor]);
 
   return (
@@ -84,10 +91,12 @@ export default function BackdropControl({
           </Button>
         </div>
         <div className="flex flex-col gap-4 mt-8">
-          <Button onClick={() => handleCalibration()}>
+          <Button onClick={() => handleCalibration()} disabled={!motor}>
             Als Nullpunkt definieren
           </Button>
-          <Button>Position speichern</Button>
+          <Button disabled={!motor} onClick={() => handleSavePosition()}>
+            Position speichern
+          </Button>
         </div>
       </Card>
     </div>

@@ -3,6 +3,7 @@ import { z } from "zod";
 export enum WebSocketEventName {
   MotorRunning = "motorRunning",
   PositionUpdate = "positionUpdate",
+  PositionListUpdate = "positionListUpdated",
   Connected = "connected",
   Disconnected = "disconnected",
 }
