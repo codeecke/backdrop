@@ -20,7 +20,6 @@ const motorSlice = createSlice({
   initialState,
   reducers: {
     setMotors(state, { payload }: { payload: Motor[] }) {
-      console.log("setMotors", payload);
       state.motors = payload;
     },
     setActiveMotorId(state, { payload }: { payload: TMotorId | undefined }) {

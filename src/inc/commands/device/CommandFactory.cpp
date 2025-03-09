@@ -4,6 +4,7 @@
 #include "./MoveCommand.h"
 #include "./StopCommand.h"
 #include "./SavePositionCommand.h"
+#include "./MoveToCommand.h"
 
 CommandFactory &CommandFactory::getInstance()
 {
@@ -20,6 +21,8 @@ void CommandFactory::setupCommands()
                     { return std::unique_ptr<StopCommand>(new StopCommand()); });
     registerCommand("savePosition", []()
                     { return std::unique_ptr<SavePositionCommand>(new SavePositionCommand()); });
+    registerCommand("moveTo", []()
+                    { return std::unique_ptr<MoveToCommand>(new MoveToCommand()); });
 }
 
 void CommandFactory::registerCommand(const std::string &name, CommandCreator command)

@@ -10,10 +10,8 @@ interface PositionListParams {
 
 export const PositionList: FC<PositionListParams> = ({ motor }) => {
   const positionList: TPosition[] =
-    useSelector((state: RootState) => {
-      console.log(state);
-      return state.positionListReducer.positions;
-    }) || [];
+    useSelector((state: RootState) => state.positionListReducer.positions) ||
+    [];
   return (
     <ul>
       {positionList.map((position: TPosition, index: number) => (

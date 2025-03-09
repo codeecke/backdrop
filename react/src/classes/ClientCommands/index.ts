@@ -57,7 +57,6 @@ export function handleClientCommand(
   ws: WebSocket,
   dispatch: Dispatch
 ) {
-  console.log("clientCommand", command);
   const commandConfig = clientCommands[command.command];
   if (!commandConfig) return;
   checkCommand(

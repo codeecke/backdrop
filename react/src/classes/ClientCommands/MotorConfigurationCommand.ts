@@ -40,6 +40,5 @@ export class MotorConfigurationCommand extends AbstractClientCommand<TMotorConfi
     dispatch(setSelectedColor(payload[0]));
     dispatch(setMotors(payload.map((config) => new Motor(ws, config))));
     dispatch(setActiveMotorId(payload[0].motorId));
-    console.log("MotorConfigurationCommand::execute()", payload);
   }
 }

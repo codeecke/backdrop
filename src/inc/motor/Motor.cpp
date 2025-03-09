@@ -15,7 +15,7 @@ void initial_stepper(int id, int stepPin, int dirPin, int enaPin)
         return;
     }
 
-    stepper[id]->setDirectionPin(dirPin);
+    stepper[id]->setDirectionPin(dirPin, false);
     stepper[id]->setEnablePin(enaPin, true);
     stepper[id]->setAutoEnable(true);
     stepper[id]->setAcceleration(1e4);
