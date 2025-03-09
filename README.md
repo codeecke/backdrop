@@ -6,16 +6,17 @@ Dieses Projekt ist eine smarte Steuerung für meinen Studio-Hintergrund. Er erla
 
 ### Frontend aufräumen
 
-* [ ] Alle WebsocketEvents löschen, die aktuell nicht implementiert sind
-* [ ] EventDispatcher durch eine CommandRegistry ersetzen (gleiche Logik wie im Backend)
+* [X] Alle WebsocketEvents löschen, die aktuell nicht implementiert sind
+* [X] EventDispatcher durch eine CommandRegistry ersetzen (gleiche Logik wie im Backend)
 * [ ] Geschwindigkeit (velocity) in MoveCommand und MoveToCommand implementieren
 
 ### Firmware
-* [ ] PositionList 
-	* [ ] speichern
-	* [ ] laden
-	* [ ] als FrontendCommand versenden
-* [ ] MoveToCommand
-* [ ] SavePositionCommand
-* [ ] Aktuelle Position auf in regelmäßigen Abständen auf Änderung prüfen und bei update als FrontendCommand versenden
+* [X] PositionList 
+	* [X] speichern
+	* [X] laden
+	* [X] als FrontendCommand versenden
+* [X] MoveToCommand
+* [X] SavePositionCommand
+* [ ] Aktuelle Position in regelmäßigen Abständen auf Änderung prüfen und bei update als FrontendCommand versenden
 * [ ] Geschwindigkeit (velocity) in MoveCommand und MoveToCommand implementieren
+* [ ] CalibrateCommand
