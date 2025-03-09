@@ -1,14 +1,16 @@
 import {
-  createWebsocketCommand,
+  createDeviceCommand,
+  DeviceCommand,
   TDirection,
   TMotorId,
-  TWebSocketEvent,
-  TWebSocketMotorRunningEvent,
-  TWebSocketPositionUpdateEvent,
-} from "@/types";
+} from "@/classes/DeviceCommands";
 import { AbstractSocketClient } from "./AbstractSocketClient";
-import { WebSocketEvent } from "../WebSocketEvent";
-import { WebSocketEventName, webSocketEventValidator } from "@/validators";
+import { TClientCommandData } from "../ClientCommands";
+import {
+  TMotorConfigurationCommand,
+  TMotorConfigurationItem,
+} from "../ClientCommands/MotorConfigurationCommand";
+import { Observable } from "../Observable";
 
 export enum MotorEvents {
   opened = "MOTOR_EVENT_OPENED",
@@ -19,10 +21,20 @@ export enum MotorEvents {
 
 export class Motor extends AbstractSocketClient {
   private position: number = 0;
-  private running: boolean = false;
+  private running: TMotorConfigurationItem["isRunning"];
+  private direction: TMotorConfigurationItem["direction"];
+  public onRunningChanged: Observable = new Observable();
+  public readonly motorId: TMotorId;
 
-  constructor(socket: WebSocket, public readonly motorId: TMotorId) {
+  constructor(socket: WebSocket, config: TMotorConfigurationItem) {
     super(socket);
+    this.motorId = config.motorId;
+    this.running = config.isRunning;
+    this.direction = config.direction;
+  }
+
+  send(command: DeviceCommand<string, unknown>) {
+    this.socket.send(command.toString());
   }
 
   getPosition() {
@@ -33,60 +45,12 @@ export class Motor extends AbstractSocketClient {
     return this.running;
   }
 
-  onOpen(): void {
-    this.dispatchEvent(MotorEvents.opened);
-  }
-
-  onClosed(): void {
-    this.dispatchEvent(MotorEvents.closed);
-  }
-
-  private isRunningEvent(
-    event: TWebSocketEvent
-  ): event is TWebSocketMotorRunningEvent {
-    return event.eventName === WebSocketEventName.MotorRunning;
-  }
-
-  private isPositionUpdateEvent(
-    event: TWebSocketEvent
-  ): event is TWebSocketPositionUpdateEvent {
-    return event.eventName === WebSocketEventName.PositionUpdate;
-  }
-  private parseMessageEvent(event: MessageEvent): TWebSocketEvent | null {
-    try {
-      const eventData = JSON.parse(event.data);
-      if (webSocketEventValidator.parse(eventData)) {
-        const sockEvent: TWebSocketEvent = new WebSocketEvent(
-          eventData.motorId,
-          eventData.eventName,
-          eventData.payload
-        );
-        return sockEvent;
-      }
-      return null;
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  }
-
-  onMessage(event: MessageEvent): void {
-    const sockEvent = this.parseMessageEvent(event);
-    if (!sockEvent || sockEvent.motorId !== this.motorId) return;
-
-    if (this.isRunningEvent(sockEvent)) {
-      this.running = sockEvent.payload.running;
-      this.dispatchEvent(MotorEvents.running, sockEvent.payload);
-    }
-
-    if (this.isPositionUpdateEvent(sockEvent)) {
-      this.position = sockEvent.payload;
-      this.dispatchEvent(MotorEvents.positionUpdate, sockEvent.payload);
-    }
+  getDirection(): TMotorConfigurationItem["direction"] {
+    return this.direction;
   }
 
   private createWebsocketCommand() {
-    return createWebsocketCommand(this.motorId);
+    return createDeviceCommand(this.motorId);
   }
 
   move(direction: TDirection) {
@@ -120,5 +84,31 @@ export class Motor extends AbstractSocketClient {
   savePosition(name: string) {
     const command = this.createWebsocketCommand().savePosition(name);
     this.send(command);
+  }
+
+  onOpen(): void {
+    throw new Error("Method not implemented.");
+  }
+  onClosed(): void {
+    throw new Error("Method not implemented.");
+  }
+
+  private isMotorConfigurationCommand(
+    command: TClientCommandData
+  ): command is TMotorConfigurationCommand {
+    return command.command === "motorConfiguration";
+  }
+
+  onMessage(event: MessageEvent): void {
+    const data: TClientCommandData = JSON.parse(event.data);
+    if (this.isMotorConfigurationCommand(data)) {
+      const config = data.payload.find(
+        (motor) => motor.motorId === this.motorId
+      );
+      if (!config) return;
+      this.running = config.isRunning;
+      this.direction = config.direction;
+      this.onRunningChanged.notify();
+    }
   }
 }

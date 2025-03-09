@@ -33,12 +33,14 @@ void SavePositionCommand::execute(AsyncWebSocketClient *clientConnection, JsonVa
     }
 
     Position newPosition;
-    newPosition.motorID = motorId;
+    newPosition.motorId = motorId;
     newPosition.name = name;
     newPosition.position = stepper[motorId]->getCurrentPosition();
 
     positions.push_back(newPosition);
     save_positions();
 
+    PositionListCommand command;
+    command.broadcast(ws);
     Serial.println("✅ SavePosition command executed");
 }

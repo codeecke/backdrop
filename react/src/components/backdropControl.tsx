@@ -1,10 +1,9 @@
 "use client";
 
-import { MotorEvents } from "@/classes/socketClients/Motor";
+import { TMotorConfigurationItem } from "@/classes/ClientCommands/MotorConfigurationCommand";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useActiveMotor } from "@/store/motorSlice";
-import { TWebSocketMotorRunningEventPayload } from "@/types";
 import { useEffect, useState } from "react";
 
 type TParams = {
@@ -18,32 +17,14 @@ export default function BackdropControl({
   onStopPressed,
   onUpPressed,
 }: TParams) {
-  const [isMoving, setIsMoving] = useState<boolean>(false);
-  const [direction, setDirection] = useState<"up" | "down" | null>(null);
   const motor = useActiveMotor();
-
-  motor?.addEventListener(
-    MotorEvents.running,
-    (payload: TWebSocketMotorRunningEventPayload) => {
-      setIsMoving(payload.running);
-      setDirection(payload.direction);
-    }
+  const [isMoving, setIsMoving] = useState<boolean>(
+    motor?.isRunning() || false
   );
-
-  const handleMove = (direction: "up" | "down") => {
-    setDirection(direction);
-    if (direction === "down") {
-      return onDownPressed();
-    }
-    if (direction === "up") {
-      return onUpPressed();
-    }
-  };
-
-  const handleStop = () => {
-    setDirection(null);
-    onStopPressed();
-  };
+  const [isMovingHandler, setIsMovingHandler] = useState<number>(-1);
+  const [direction, setDirection] = useState<
+    TMotorConfigurationItem["direction"]
+  >(motor?.getDirection() || "up");
 
   const handleCalibration = () => {
     if (!motor) return;
@@ -60,7 +41,15 @@ export default function BackdropControl({
     motor.savePosition(name);
   };
 
-  useEffect(() => {}, [motor]);
+  useEffect(() => {
+    if (!motor) return;
+    const handler = motor?.onRunningChanged.subscribe(() => {
+      setIsMoving(motor.isRunning());
+      setDirection(motor.getDirection());
+    });
+    setIsMovingHandler(handler);
+    return () => motor.onRunningChanged.unsubscribe(isMovingHandler);
+  }, [motor]);
 
   return (
     <div className="p-4 flex justify-center items-center">
@@ -69,7 +58,7 @@ export default function BackdropControl({
           <Button
             className="w-24 h-24 p-0"
             variant={direction === "up" && isMoving ? "default" : "secondary"}
-            onClick={() => handleMove("up")}
+            onClick={() => onUpPressed()}
           >
             <div className="w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-b-[60px] border-b-current" />
           </Button>
@@ -77,7 +66,7 @@ export default function BackdropControl({
           <Button
             className="w-24 h-24 p-0"
             variant="secondary"
-            onClick={handleStop}
+            onClick={() => onStopPressed()}
           >
             <div className="w-20 h-20 bg-current" />
           </Button>
@@ -85,7 +74,7 @@ export default function BackdropControl({
           <Button
             className="w-24 h-24 p-0"
             variant={direction === "down" && isMoving ? "default" : "secondary"}
-            onClick={() => handleMove("down")}
+            onClick={() => onDownPressed()}
           >
             <div className="w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-t-[60px] border-t-current" />
           </Button>

@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #include "./AbstractCommand.h"
-#include "../motor/Motor.h"
+#include "../../motor/Motor.h"
 
 class HomeCommand : public AbstractCommand
 {

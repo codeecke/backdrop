@@ -4,13 +4,9 @@ import ColorSelector from "./components/colorSelector";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { RootState } from "./store";
 import { setSelectedColor } from "./store/colorSlice";
-import { TColor, TWebSocketPositionListUpdateEventPayload } from "./types";
+import { TColor } from "./types";
 import { useDispatch, useSelector } from "react-redux";
 import { useActiveMotor } from "./store/motorSlice";
-import { useWebSocketEvent } from "./components/WebSocketProvider";
-import { WebSocketEventName } from "./validators";
-import { useEffect } from "react";
-import { setPositionList } from "./store/positionListSlice";
 import { PositionList } from "./components/PositionList";
 
 function App() {
@@ -19,18 +15,6 @@ function App() {
   );
   const motor = useActiveMotor();
   const dispatch = useDispatch();
-  const event = useWebSocketEvent();
-
-  useEffect(() => {
-    if (!event) return;
-    console.log("eventlistener initialized");
-    event.addEventListener(WebSocketEventName.PositionListUpdate, (payload) => {
-      console.log("positions loeded", payload);
-      dispatch(
-        setPositionList(payload as TWebSocketPositionListUpdateEventPayload)
-      );
-    });
-  }, [event]);
 
   return (
     <>

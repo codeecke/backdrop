@@ -37,4 +37,7 @@ void MoveCommand::execute(AsyncWebSocketClient *clientConnection, JsonVariant pa
     stepper[0]->setAcceleration(1e6);
     stepper[0]->setSpeedInHz(1e4);
     stepper[0]->move(target);
+
+    MotorConfigurationCommand client;
+    client.broadcast(ws);
 }

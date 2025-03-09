@@ -1,9 +1,7 @@
-import { WebSocketCommand } from "@/types";
-import { EventDispatcher } from "../EventDispatcher";
+import { DeviceCommand } from "../DeviceCommands";
 
-export abstract class AbstractSocketClient extends EventDispatcher {
+export abstract class AbstractSocketClient {
   constructor(protected socket: WebSocket) {
-    super();
     socket.addEventListener("close", () => this.onClosed());
     socket.addEventListener("open", () => this.onOpen());
     socket.addEventListener("message", (event: MessageEvent) =>
@@ -11,7 +9,7 @@ export abstract class AbstractSocketClient extends EventDispatcher {
     );
   }
 
-  send(command: WebSocketCommand<string, unknown>) {
+  send(command: DeviceCommand<string, unknown>) {
     this.socket.send(command.toString());
   }
 

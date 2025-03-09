@@ -1,12 +1,13 @@
+import { TMotorConfigurationItem } from "@/classes/ClientCommands/MotorConfigurationCommand";
 import { RootState } from "@/store";
-import { TColor } from "@/types";
+
 import { CSSProperties } from "react";
 import { useSelector } from "react-redux";
 
 type TParams = {
-  colors: TColor[];
-  defaultValue?: TColor;
-  onChange?: (value: TColor) => void;
+  colors: TMotorConfigurationItem[];
+  defaultValue?: TMotorConfigurationItem;
+  onChange?: (value: TMotorConfigurationItem) => void;
 };
 
 type StyleGenerator = (color: string, active: boolean) => CSSProperties;
@@ -44,8 +45,11 @@ export default function ColorSelector({ colors, onChange }: TParams) {
       <ul style={styles.container}>
         {colors.map((color) => (
           <li
-            style={styles.item(color.name, activeValue?.id === color.id)}
-            key={color.id}
+            style={styles.item(
+              color.name,
+              activeValue?.motorId === color.motorId
+            )}
+            key={color.motorId}
             onClick={() => {
               if (onChange) {
                 onChange(color);

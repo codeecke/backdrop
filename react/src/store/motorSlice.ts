@@ -1,9 +1,9 @@
 import { Motor } from "@/classes/socketClients/Motor";
-import { TMotorId } from "@/types";
 import { createSlice } from "@reduxjs/toolkit";
 
 import { useSelector } from "react-redux";
 import { RootState } from ".";
+import { TMotorId } from "@/classes/DeviceCommands";
 
 interface MotorState {
   motors: Motor[];

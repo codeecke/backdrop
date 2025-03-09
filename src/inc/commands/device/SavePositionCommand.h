@@ -3,8 +3,10 @@
 
 #include <Arduino.h>
 #include "./AbstractCommand.h"
-#include "../motor/Motor.h"
-#include "../sd/positions.h"
+#include "../../motor/Motor.h"
+#include "../../sd/positions.h"
+#include "../../network/WebSocketServer.h"
+#include "../client/PositionListCommand.h"
 
 struct SavePositionCommandPayload
 {

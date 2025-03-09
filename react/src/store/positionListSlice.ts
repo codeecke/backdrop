@@ -1,8 +1,8 @@
-import { TWebSocketPositionListUpdateEventPayload } from "@/types";
+import { TPosition } from "@/classes/ClientCommands/PositionListCommand";
 import { createSlice } from "@reduxjs/toolkit";
 
 interface PositionListState {
-  positions: TWebSocketPositionListUpdateEventPayload;
+  positions: TPosition[];
 }
 
 const initialState: PositionListState = {
@@ -15,9 +15,8 @@ const positionListSlice = createSlice({
   reducers: {
     setPositionList(
       state: PositionListState,
-      { payload }: { payload: TWebSocketPositionListUpdateEventPayload }
+      { payload }: { payload: TPosition[] }
     ) {
-      console.log("set state", payload);
       state.positions = payload;
       return state;
     },

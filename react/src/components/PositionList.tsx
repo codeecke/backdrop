@@ -1,9 +1,6 @@
+import { TPosition } from "@/classes/ClientCommands/PositionListCommand";
 import { Motor } from "@/classes/socketClients/Motor";
 import { RootState } from "@/store";
-import {
-  TWebSocketPositionListUpdateEventPayload,
-  TWebSocketPositionListUpdateEventPayloadItem,
-} from "@/types";
 import { FC } from "react";
 import { useSelector } from "react-redux";
 
@@ -12,24 +9,22 @@ interface PositionListParams {
 }
 
 export const PositionList: FC<PositionListParams> = ({ motor }) => {
-  const positionList: TWebSocketPositionListUpdateEventPayload =
+  const positionList: TPosition[] =
     useSelector((state: RootState) => {
       console.log(state);
       return state.positionListReducer.positions;
     }) || [];
   return (
     <ul>
-      {positionList.map(
-        (position: TWebSocketPositionListUpdateEventPayloadItem) => (
-          <li
-            key={position.position}
-            className="flex bg-white p-4 cursor-pointer"
-            onClick={() => motor.moveTo(position.position)}
-          >
-            {position.name}
-          </li>
-        )
-      )}
+      {positionList.map((position: TPosition, index: number) => (
+        <li
+          key={index}
+          className="flex bg-white p-4 cursor-pointer"
+          onClick={() => motor.moveTo(position.position)}
+        >
+          {position.name}
+        </li>
+      ))}
     </ul>
   );
 };

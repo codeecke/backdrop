@@ -36,6 +36,10 @@ void onWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, Aw
         if (client->status() == WS_CONNECTED)
         {
             Serial.println("✅ Client verbunden!");
+            MotorConfigurationCommand motorConfigurationCommand;
+            PositionListCommand positionListCommand;
+            motorConfigurationCommand.send(*client);
+            positionListCommand.send(*client);
         }
         else
         {

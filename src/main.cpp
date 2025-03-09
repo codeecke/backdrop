@@ -1,4 +1,4 @@
-#include "./inc/commands/CommandFactory.h"
+#include "./inc/commands/device/CommandFactory.h"
 #include "./inc/network/wifi.h"
 #include "./inc/network/WebServer.h"
 #include "./inc/network/WebSocketServer.h"

@@ -31,5 +31,7 @@ void StopCommand::execute(AsyncWebSocketClient *clientConnection, JsonVariant pa
 
     Serial.println("Stop command executed");
     stepper[motorId]->forceStop();
+    MotorConfigurationCommand client;
+    client.broadcast(ws);
     Serial.printf("Current Position: %d\n", stepper[motorId]->getCurrentPosition());
 }

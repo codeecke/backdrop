@@ -3,7 +3,9 @@
 
 #include <Arduino.h>
 #include "./AbstractCommand.h"
-#include "../motor/Motor.h"
+#include "../../motor/Motor.h"
+#include "../../commands/client/MotorConfigurationCommand.h"
+#include "../../network/WebSocketServer.h"
 
 struct StopCommandPayload
 {

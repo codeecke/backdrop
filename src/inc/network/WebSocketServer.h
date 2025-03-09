@@ -2,9 +2,11 @@
 #define WEBSOCKETSERVER_H
 #include <AsyncWebSocket.h>
 #include <memory>
-#include "../commands/CommandFactory.h"
+#include "../commands/device/CommandFactory.h"
+#include "../commands/client/MotorConfigurationCommand.h"
+#include "../commands/client/PositionListCommand.h"
 
 AsyncWebSocket *websocket_setup();
 
-extern AsyncWebSocket ws;
+extern AsyncWebSocket ws; // <- hier ist es definiert
 #endif

@@ -25,7 +25,7 @@ void load_positions()
         }
 
         Position position;
-        position.motorID = obj["motorID"].as<u_int>();
+        position.motorId = obj["motorID"].as<u_int>();
         position.name = obj["name"].as<String>();
         position.position = obj["position"].as<float>();
 
@@ -40,7 +40,7 @@ void convert_positions_to_json(JsonDocument &doc)
     for (const auto &pos : positions)
     {
         JsonObject obj = array.add<JsonObject>(); // Neues Objekt im Array hinzufügen
-        obj["motorID"] = pos.motorID;
+        obj["motorID"] = pos.motorId;
         obj["name"] = pos.name;
         obj["position"] = pos.position;
     }

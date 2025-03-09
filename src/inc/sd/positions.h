@@ -10,7 +10,7 @@
 
 struct Position
 {
-    u_int motorID;
+    u_int motorId;
     float position;
     String name;
 };
