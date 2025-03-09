@@ -6,6 +6,7 @@ void onWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, Aw
 {
     if (type == WS_EVT_DATA)
     {
+        Serial.println("📥 WebSocket-Daten empfangen!");
         String json = String((char *)data, len);
 
         JsonDocument doc;
@@ -34,21 +35,22 @@ void onWebSocketMessage(AsyncWebSocket *server, AsyncWebSocketClient *client, Aw
 
         if (client->status() == WS_CONNECTED)
         {
-            Serial.println("Client verbunden");
+            Serial.println("✅ Client verbunden!");
         }
         else
         {
-            Serial.println("Client nicht verbunden");
+            Serial.println("❌ Client nicht verbunden!");
         }
     }
     else if (type == WS_EVT_DISCONNECT)
     {
-        Serial.println("Client getrennt");
+        Serial.println("❌ Client getrennt!");
     }
 }
 
 AsyncWebSocket *websocket_setup()
 {
+
     ws.onEvent(onWebSocketMessage);
     return &ws;
 }

@@ -34,7 +34,7 @@ void MoveCommand::execute(AsyncWebSocketClient *clientConnection, JsonVariant pa
 
     int target = payloadData.direction == "up" ? 1e6 : -1e6;
 
-    stepper[motorId]->setAcceleration(1e6);
-    stepper[motorId]->setSpeedInHz(1e4);
-    stepper[motorId]->move(target);
+    stepper[0]->setAcceleration(1e6);
+    stepper[0]->setSpeedInHz(1e4);
+    stepper[0]->move(target);
 }

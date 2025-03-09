@@ -3,5 +3,6 @@
 #include <ESPAsyncWebServer.h>
 #include <AsyncWebSocket.h>
 
+extern AsyncWebServer server;
 void webserver_setup(AsyncWebSocket *ws = nullptr);
 #endif

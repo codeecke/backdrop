@@ -1,23 +1,12 @@
 #ifndef MOTOR_H
 #define MOTOR_H
+#include "../sd/motor_config.h"
 #include <Arduino.h>
 #include <FastAccelStepper.h>
 
-struct Color
-{
-    u_char red;
-    u_char green;
-    u_char blue;
-};
+#define MOTOR_COUNT 2
 
-struct MotorConfigItem
-{
-    u_int id;
-    Color color[7];
-    char name[20];
-};
-
-extern FastAccelStepper *stepper[1];
+extern FastAccelStepper *stepper[MOTOR_COUNT];
 
 void motor_setup();
 bool check_motor_id(int motorId);
